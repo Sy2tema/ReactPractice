@@ -11,6 +11,8 @@
     <div id='root'></div>
     <script type='text/babel'>
         class Gugudan extends React.Component {
+            //constructor를 제거하고 바로 state를 입력하더라도 같은 효과를 얻을 수 있으며
+            //실무에서는 이 방식이 더 많이 쓰인다.
             constructor(props) {
                 super(props);
 
@@ -56,16 +58,20 @@
             //JSX와 JavaScript를 혼용하지 않는것이 좋다. 그렇지 않다면 가독성 등의 여러 손해가 발생한다.
             //JSX는 XML이기 때문에 single tag일 시 /를 맨 뒤에 붙여줘야 오류가 발생하지 않는다.
             //onChange 또는 onInput을 사용해야 정상적으로 가변 값을 state에 넣어줄 수 있다.
+            //JSX를 작성하는 과정에서 겉의 쓸데없는 <div>태그가 감싸게 되어 가독성이 나빠지는 문제가 있다.
+            //이를 <></>의 빈 태그로 바꿔주게 된다면 실제 실행시 겉에 쓸데없던 태그가 사라지는 효과를 얻을 수 있게 된다.
+            //Babel이 만약 <>태그를 인식해주지 못할 경우 <React.Fragment>를 넣어주면 동일한 효과를 얻을 수 있다.
+            //Babel2를 설치하게 되면 <>태그가 정상적으로 인식된다.
             render() {
                 return (
-                    <div>
-                        <div>{this.state.firstNumber}곱하기 {this.state.secondNumber}은 무엇입니까?</div>
+                    <React.Fragment>
+                        <div>{this.state.firstNumber}곱하기 {this.state.secondNumber}은(는) 무엇입니까?</div>
                         <form onSubmit={this.onSubmit}>   
                             <input type="number" value={this.state.inputValue} onChange={this.onChange}/>
                             <button>입력</button>
                         </form>
                         <div>{this.state.resultString}</div>
-                    </div>
+                    </React.Fragment>
                 );
             }
         }
