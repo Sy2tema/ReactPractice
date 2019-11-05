@@ -36,27 +36,27 @@
             const onSubmit = (e) => {
                 e.preventDefault();
 
-                if (this.inputValue === '')
+                if (inputValue === '')
                     return;
                 
                 if (parseInt(inputValue) === firstNumber * secondNumber) {
-                    setResult('입력한 숫자인 ' + inputValue + '는 정답입니다!');
+                    setResult('입력한 숫자인 ' + inputValue + '은(는) 정답입니다!');
                     setFirst(Math.ceil(Math.random() * 9));
                     setSecond(Math.ceil(Math.random() * 9));
                     setValue('');
-                    inputRef.currnet.focus();
                 } else {
                     setResult("입력한 숫자는 답이 아닙니다. 다시 입력해주세요.");
                     setValue('');
-                    inputRef.current.focus();
                 }
+
+                inputRef.current.focus();
             }
 
             return (
                 <React.Fragment>
                     <div>{firstNumber}곱하기 {secondNumber}의 답은 무엇입니까?</div>
                     <form onSubmit={onSubmit}>
-                        <input ref={inputRef} onChange={onChange} type="number" value='inputValue'/>
+                        <input ref={inputRef} onChange={onChange} type="number" value={inputValue}/>
                         <button>입력</button>
                     </form>
                     <div id='resutString'>{resultString}</div>
