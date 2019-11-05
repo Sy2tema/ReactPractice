@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>구구단 (리액트 훅스)</title>
+    <script src='https://unpkg.com/react@16/umd/react.development.js'></script>
+    <script src='https://unpkg.com/react-dom@16/umd/react-dom.development.js'></script>
+    <script src='https://unpkg.com/babel-standalone@6/babel.min.js'></script>
+</head>
+<body>
+    <!--현재의 리액트는 클래스보다는 Hooks를 사용하는 것을 요구하고 있다.-->
+    <!--그럼에도 콜래스를 알아야 하는 이유는 지금까지 작성된 코드들이 클래스로 작성되었을 것이기 때문이다.-->
+    <div id='root'></div>
+    <script type='text/babel'>
+        //아래의 코드는 함수형 컴포넌트라고 불린다. 이러한 형식은 보통 state나 ref를 쓰지 않는 컴포넌트에 자주 쓰여왔다.
+        //이러한 함수형 컴포넌트에도 state와 ref를 사용 가능하게 해주는 것이 Hooks라고 할 수 있다.
+        //Hooks를 사용할 때 주의해야 할 사항으로는 반드시 함수형 컴포넌트 안에서만 사용해야 한다는 것이다.
+        //class에 비한 Hooks의 차이로는 state가 바뀔 때마다 랜더링이 수시로 되면 함수 자체가 통채로 다시 실행된다는 것이다.
+        const Gugudan = () => {
+            //클래스에서의 state설정과는 달리 Hooks의 state 설정은 각 state마다 setState를 개별로 지정한다는 차이가 있다.
+            //state를 Hooks에서 쓰기 위해서는 React.useState메소드를 활용해야 한다.
+            //구조 분해 할당 문법
+            //클래스와 같이 묶어서 state를 관리할 수도 있기는 하지만 몇가지의 상태만 변경하고자 할 때 변경하지 않은 상태들 자체가 없어지는 문제가 발생할 수 있다.
+            const [firstNumber, setFirst] = React.useState(Math.ceil(Math.random() * 9));
+            const [secondNumber, setSecond] = React.useState(Math.ceil(Math.random() * 9));
+            const [inputValue, setValue] = React.useState('');
+            const [resultString, setResult] = React.useState('');
+
+            //ref를 Hooks에서 쓰기 위해서는 React.useRef메소드를 활용해야 한다.
+            const inputRef = React.useRef();
+
+            const onChange = (e) => {
+                setValue(e.target.value);
+            }
+
+            const onSubmit = (e) => {
+                e.preventDefault();
+
+                if (this.inputValue === '')
+                    return;
+                
+                if (parseInt(inputValue) === firstNumber * secondNumber) {
+                    setResult('입력한 숫자인 ' + inputValue + '는 정답입니다!');
+                    setFirst(Math.ceil(Math.random() * 9));
+                    setSecond(Math.ceil(Math.random() * 9));
+                    setValue('');
+                    inputRef.currnet.focus();
+                } else {
+                    setResult("입력한 숫자는 답이 아닙니다. 다시 입력해주세요.");
+                    setValue('');
+                    inputRef.current.focus();
+                }
+            }
+
+            return (
+                <React.Fragment>
+                    <div>{firstNumber}곱하기 {secondNumber}의 답은 무엇입니까?</div>
+                    <form onSubmit={onSubmit}>
+                        <input ref={inputRef} onChange={onChange} type="number" value='inputValue'/>
+                        <button>입력</button>
+                    </form>
+                    <div id='resutString'>{resultString}</div>
+                </React.Fragment>
+            );
+        }
+    </script>
+    
+</body>
+</html>
