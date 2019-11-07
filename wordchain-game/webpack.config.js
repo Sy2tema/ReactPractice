@@ -1,4 +1,4 @@
-const path = require('path');
+const Path = require('path');
 
 module.exports = {
     name: 'wordchain-game',
@@ -15,13 +15,24 @@ module.exports = {
             test: /\.jsx?$/,
             loader: 'babel-loader',
             options: {
-                presets: ['@babel/preset-env', '@babel/preset-react'],
-                plugins: ['@babel/plugin-proposal-class-properties']
+                presets: [
+                    ['@babel/preset-env', {
+                        targets: {
+                            browsers: ['> 1% in KR']
+                        },
+                        debug: true
+                    }], 
+                    '@babel/preset-react'
+                ],
+                plugins: [
+                    '@babel/plugin-proposal-class-properties',
+                    'react-hot-loader/babel'
+                ]
             }
         }]
     },
     output: {
-        path: path.join(__dirname, 'dist'),
+        path: Path.join(__dirname, 'dist'),
         filename: 'app.js'
     }
 }

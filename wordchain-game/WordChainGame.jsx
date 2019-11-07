@@ -16,16 +16,6 @@ class WordChainGame extends Component {
         if (this.inputValue === '')
             return;
 
-        if (regexr.test(this.inputValue)) {
-            this.setState({
-                isCorrect: '숫자나 특수문자는 들어갈 수 없습니다. 단어를 다시 입력해주세요.',
-                inputValue: ''
-            });
-            this.input.focus();
-
-            return;
-        }
-
         if (this.state.word[this.state.word.length - 1] === this.state.inputValue[0]) {
             this.setState({
                 isCorrect: '형식에 잘 맞게 작성하셨습니다.',
