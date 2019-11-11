@@ -7,10 +7,12 @@ import React, {Component} from 'react';
 //jsx파일 형식에서의 주석처리는 {/**/}가 된다.
 class Attempt extends Component {
     render() {
+        const {attemptInfo} = this.props;
+
         return (
             <li>
-                <div>{this.props.attemptInfo.attempt}</div>
-                <div>{this.props.attemptInfo.result}</div>
+                <div>{attemptInfo.attempt}</div>
+                <div>{attemptInfo.result}</div>
             </li>
         );
     }

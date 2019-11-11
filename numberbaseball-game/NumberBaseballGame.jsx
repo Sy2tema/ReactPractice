@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Attempt from './Attempt'
 
+//this를 사용하지 않는 클래스 내의 부분은 함수로서 분할이 가능하다.
 function createQuestion() {
     const candidate = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     const list = [];
@@ -34,37 +35,43 @@ class NumberBaseballGame extends Component {
         this.onChangeInput = this.onChangeInput.bind(this);
         this.inputRef = this.inputRef.bind(this);
     }
-    
 
     onSubmitForm(e) {
         e.preventDefault();
+        //비구조화 할당을 활용해 자주 쓰이는 this.state를 따로 빼줄 수 있다.
+        const {resultString, inputValue, questionNumber, attempts} = this.state;
 
-        if (this.state.inputValue === '')
+        if (inputValue === '')
             return;
 
         //...(객체명)방식으로 쓰는 것을 spread문법이라 하며 얕은 복사가 가능하도록 만들어준다.
-        if (this.state.inputValue === this.state.questionNumber.join('')) {
-            this.setState({
-                resultString: `입력한 숫자인 ${this.value}는 정답입니다!`,
-                attempts: [...this.state.attempts, {attempt: this.state.inputValue, result: '홈런!'}] 
+        if (inputValue === questionNumber.join('')) {
+            //prevState변수를 추가적으로 생성해 이전 시도를 저장한 배열을 현재 바꿀 배열과 구분지어야 한다.
+            //그렇지 않을 경우 현재 바꾸고자 할 배열과 이전 배열의 관계가 꼬일 수 있기 때문이다.
+            this.setState(function (prevState) {
+                return {
+                    resultString: `입력한 숫자인 ${inputValue}은(는) 정답입니다!`,
+                    attempts: [...prevState.attempts, {attempt: inputValue, result: '홈런!'}] 
+                };
             });
 
             alert('게임을 다시 시작합니다.');
 
             this.setState({
-                value: '',
+                inputValue: '',
                 questionNumber: createQuestion(),
                 attempts: []
             });
         } else {
             //입력받은 4자리수를 각각 쪼개 inputArray객체에 넣어준다.
-            const inputArray = this.state.inputValue.split('').map((value) => parseInt(value));
+            //map메소드를 사용할 때의 주의할 점은 입력값과 출력값의 숫자가 항상 같아야 한다는 것이다.
+            const inputArray = inputValue.split('').map((value) => parseInt(value));
             let strike = 0;
             let ball = 0;
 
-            if (this.state.attempts.length >= 9) {
+            if (attempts.length >= 9) {
                 this.setState({
-                    resultString: `10번 틀리셨습니다. 정답은 ${this.state.questionNumber.join('')} 입니다.`
+                    resultString: `10번 틀리셨습니다. 정답은 ${questionNumber.join('')} 입니다.`
                 });
 
                 this.setState({
@@ -74,15 +81,17 @@ class NumberBaseballGame extends Component {
                 });
             } else {
                 for (let i = 0; i < 4; i++) {
-                    if (inputArray[i] === this.state.questionNumber[i])
+                    if (inputArray[i] === questionNumber[i])
                         strike++;
-                    else if (this.state.questionNumber.includes(inputArray[i]))
+                    else if (questionNumber.includes(inputArray[i]))
                         ball++;
                 }
 
-                this.setState({
-                    attempts: [...this.state.attempts, {attempt: this.state.inputValue, result: `${strike}스트라이크 ${ball}볼 입니다.`}],
-                    inputValue: ''
+                this.setState(function(prevState) {
+                    return {
+                        attempts: [...prevState.attempts, {attempt: inputValue, result: `${strike}스트라이크 ${ball}볼 입니다.`}],
+                        inputValue: ''
+                    };
                 });
             }
         }
@@ -104,24 +113,25 @@ class NumberBaseballGame extends Component {
     //성능 최적화를 위해서라도 반드시 키는 단순한 인덱스 번호를 설정하기보다 반복되지 않는 문자열을 설정해주는것이 좋다.
     //정확하게는 react가 key를 기준으로 요소를 추가, 수정, 삭제 판단하기 때문에 배열의 순서가 바뀌게 될 경우 곧바로 문제가 생길 수도 있기 때문이다.
     //이 때 분리된 컴포넌트에 대해 속성값이 따라가지 못한다는 문제가 있는데 HTML에서 태그에 attribute를 지정해주듯이 props를 지정해주어 문제를 해결할 수 있다.
-
     render() {
+        const {resultString, inputValue, attempts} = this.state;
+
         return (
             <>
-                <h1>{this.state.resultString}</h1>
+                <h1>{resultString}</h1>
                 <form onSubmit={this.onSubmitForm}>
                     <input 
                         ref={this.inputRef} 
                         type="number" 
                         minLength={4} 
                         maxLength={4} 
-                        value={this.state.inputValue} 
+                        value={inputValue} 
                         onChange={this.onChangeInput}
                     />
                 </form>
-                <div>시도 수 : {this.state.attempts.length}</div>
+                <div>시도 수 : {attempts.length}</div>
                 <ul>
-                    {this.state.attempts.map((value, index) => {
+                    {attempts.map(function (value, index) {
                         return (
                             <Attempt key={`${index + 1}차 시도 : `} attemptInfo={value}/>
                         );
