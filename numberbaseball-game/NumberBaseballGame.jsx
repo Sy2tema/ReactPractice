@@ -36,6 +36,15 @@ class NumberBaseballGame extends Component {
         this.inputRef = this.inputRef.bind(this);
     }
 
+    //숫자야구게임에서 값을 아직 submit하지 않고 input창에 입력만 하는데도 리스트의 상태가 계속
+    //다시 랜더링되는 문제를 해결하기 위해 추가적으로 함수 적용
+    //이 함수를 적용하게 될 경우 이전 상태와 비교해 변경점이 있을 경우에만 해당 컴포넌트를 다시 랜더링하게 된다.
+    // shouldComponentUpdate(nextProps, nextState, nextContext) {
+    //     if (this.state.counter !== nextState.counter)
+    //         return true;
+    //     return false;
+    // }
+
     onSubmitForm(e) {
         e.preventDefault();
         //비구조화 할당을 활용해 자주 쓰이는 this.state를 따로 빼줄 수 있다.
