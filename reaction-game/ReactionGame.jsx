@@ -45,19 +45,30 @@ class ReactionGame extends Component {
                 };
             });
         }
-    }
+    };
 
     //null일 경우 div태그가 아예 없는 상태가 된다.
     renderAverage = () => {
         const {reactionTime} = this.state;
         return reactionTime.length === 0 ?
-            null : <div>평균 시간 : {reactionTime.reduce((a, c) => a + c) / reactionTime.length}ms</div>;
-    }
+            null : 
+            <>
+                <div>평균 반응시간 : {reactionTime.reduce((a, c) => a + c) / reactionTime.length}ms</div>
+                <button onClick={this.resetHistory}>기록 초기화</button>
+            </>
+    };
+
+    resetHistory = () => {
+        this.setState({
+            reactionTime: []
+        })
+    };
 
     //render메소드 내의 return부분, 즉 JSX부분에서는 for과 if를 쓸 수 없다.
     //JSX에서 조건문을 사용하고 싶을 때는 보통 삼항연산자를 활용하게 된다.
     //JSX안에서는 조건문이나 반복문을 넣지 않는것을 권장하기 때문에 따로 커스텀 함수를 선언하여 가독성을 늘려주는 것이 좋다.
     //JSX에서 false, undefined, null은 태그가 없음을 의미한다.
+    //성능 향상을 위해서는 위의 색을 보여주는 div태그와 아래의 반응속도를 기록한 div태그를 분리하는 것이 좋다.
     render() {
         const {currentState, information} = this.state;
         
@@ -73,7 +84,7 @@ class ReactionGame extends Component {
                 {this.renderAverage()}
             </>
         );
-    }
+    };
 }
 
 export default ReactionGame;

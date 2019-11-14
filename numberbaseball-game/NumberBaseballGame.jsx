@@ -45,7 +45,6 @@ class NumberBaseballGame extends Component {
     //         return true;
     //     return false;
     // }
-
     onSubmitForm(e) {
         e.preventDefault();
         //비구조화 할당을 활용해 자주 쓰이는 this.state를 따로 빼줄 수 있다.

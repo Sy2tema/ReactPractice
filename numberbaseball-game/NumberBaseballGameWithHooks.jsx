@@ -13,6 +13,8 @@ const createQuestion = () => {
     return list;
 }
 
+//쓸데없이 매 랜더링마다 createQuestion메소드가 계속 재실행되는 문제를 발견했다.
+//이를 해결하기 위해서는 useEffect의 useMemo나 useCallback를 사용해야 한다.
 const NumberBaseballGameWithHooks = () => {
     const [questionNumber, setQuestion] = useState(createQuestion());
     const [resultString, setResult] = useState('숫자야구 게임입니다. 10번 내에 정답을 맞춰주세요.');
