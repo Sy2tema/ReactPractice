@@ -7,6 +7,8 @@ import React, {PureComponent} from 'react';
 //jsx파일 형식에서의 주석처리는 {/**/}가 된다.
 //PureComponent를 extend하거나 클래스 안에 shouldComponentUpdate메소드를 넣어주는 방식을 통해 변화가 없음에도 계속 다시 랜더링되는
 //현상을 개선할 수 있게 된다.
+//부모로부터 props로 받아온 속성값은 자식이 바꾸지 않고 부모가 바꿔야 한다. 
+//자식이 props의 값을 바꾸고 싶은 경우 따로 자식이 state를 만든 후 해당 값을 넣어준 다음 바꾸는 절차를 통해야 한다.
 class Attempt extends PureComponent {
     render() {
         const {attemptInfo} = this.props;
