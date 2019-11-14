@@ -1,4 +1,4 @@
-import React, {useState, createRef} from 'react';
+import React, {useState, useRef} from 'react';
 import Attempt from './AttemptWithhooks'
 
 const createQuestion = () => {
@@ -68,6 +68,10 @@ const NumberBaseballGameWithHooks = () => {
         inputRef.current.focus();
     }
 
+    const onChangeValue = (e) => {
+        setValue(e.target.value);
+    }
+    
     return (
         <>
             <h1>{resultString}</h1>
@@ -75,10 +79,9 @@ const NumberBaseballGameWithHooks = () => {
                 <input 
                     ref={inputRef} 
                     type="number" 
-                    minLength={4} 
                     maxLength={4} 
-                    value={inputValue} 
-                    onChange={(e) => setValue(e.target.value)}
+                    value={inputValue}
+                    onChange={onChangeValue}
                 />
             </form>
             <div>시도 수 : {attempts.length}</div>
