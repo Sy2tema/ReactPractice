@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {hot} from 'react-hot-loader/root';
-import RockScissorsPaperGame from './RockScissorsPaperGame';
+import RockScissorsPaperGame from './RockScissorsPaperGameWithHooks';
 
 const Hot = hot(RockScissorsPaperGame);
 

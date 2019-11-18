@@ -1,22 +1,7 @@
 import React, {Component} from 'react';
-
-const RSPCoords = {
-    rock: '0',
-    scissor: '-142px',
-    paper: '-284px'
-};
-
-const scores = {
-    scissor: 1,
-    rock: 0,
-    paper: -1
-};
-
-const computerChoice = (imgCoord) => {
-    return Object.entries(RSPCoords).find(function (value) {
-        return value[1] === imgCoord;
-    })[0];
-};
+import RSPCoords from './RSPCoords';
+import scores from './scores';
+import computerChoice from './computerChoice';
 
 //LifeCycle
 //class의 경우 => constructor -> render -> ref -> componentDidMount -> (stata/props바뀔때) shouldComponentUpdate -> render 
@@ -38,7 +23,7 @@ class RockScissorsPaperGame extends Component {
         //인터벌이 시작되면 별도의 종료명령을 선언하지 않는다면 브라우저가 종료되기 전까지 계속 반복된다.
         //또한 인터벌 등을 관리할 때는 클로저 문제에 대해 고려하지 않으면 문제가 발생할 수 있다.
         this.interval = setInterval(this.changeHand, 100);
-    };
+    }
 
     //컴포넌트가 제거되기 전에는 비동기 요청`들에 대한 정리를 주로 하게 된다.
     //자식 컴포넌트를 빠져나올때는 이 메소드를 등록해주어야 메모리 누수가 덜 일어나도록 만들 수 있다.
@@ -46,6 +31,8 @@ class RockScissorsPaperGame extends Component {
         clearInterval(this.interval);
     }
 
+    //choice 뒤의 두 번째 화살표 함수는 밑에서 해당 함수를 쓰는 부분의 onClickButton을 불러오는 부분에서
+    //() => this.onClickButton('선택')부분의 앞부분을 함축시켜 코드량을 단축시키고자 사용하는 고차함수다.
     onClickButton = (choice) => () => {
         clearTimeout(this.timeout); //결과가 제대로 출력되기 전에 다른 손을 냈을 경우 로테이션되는 속도가 점점 빨라지는 문제 수정
         const {imgCoord} = this.state;
@@ -95,7 +82,7 @@ class RockScissorsPaperGame extends Component {
                 imgCoord: RSPCoords.rock
             });
         }
-    }
+    };
 
     render() {
         const {totalScore, resultString, imgCoord} = this.state;
