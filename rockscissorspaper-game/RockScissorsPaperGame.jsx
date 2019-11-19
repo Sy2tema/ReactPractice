@@ -13,6 +13,8 @@ class RockScissorsPaperGame extends Component {
         imgCoord: RSPCoords.rock
     };
 
+    //인터벌이나 타임아웃은 굳이 componentDidMount메소드 내에 위치할 필요 없이 필요한 시점에 사용해도 무방하다.
+    //단, 사용했을 경우에는 componentWillUnmount에서 정리해야 한다는 것을 기억해야 한다.
     interval;
     timeout;
 
