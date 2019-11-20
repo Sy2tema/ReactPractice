@@ -41,6 +41,8 @@ class ReactionGame extends Component {
                 return {
                     currentState: 'waiting',
                     information: '클릭해서 시작하세요.',
+                    //reactionTime: prevState.reactionTime.concat(this.endTime - this.startTime)
+                    //위 코드처럼 concat메소드를 활용해도 같은 결과를 얻을 수 있다.
                     reactionTime: [...prevState.reactionTime, this.endTime - this.startTime]
                 };
             });

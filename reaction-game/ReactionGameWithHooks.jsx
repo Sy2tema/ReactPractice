@@ -39,6 +39,7 @@ const ReactionGameWithHooks = () => {
         }
     };
 
+    //해당 함수는 반환값을 받아 랜더링해야 하기 때문에 renderAverage형태가 아니라 renderAverage()형태로 입력해 반환값을 불러올 수 있도록 한다.
     const renderAverage = () => {
         return reactionTime.length === 0 ?
             null : 
@@ -61,7 +62,7 @@ const ReactionGameWithHooks = () => {
             >
                 {information}
             </div>
-            {renderAverage}
+            {renderAverage()}
         </>
     );
 };
