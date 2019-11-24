@@ -59,8 +59,11 @@ const reducer = (state, action) => {
             return state;
     }
 };
-
+    
+//useReducer는 사용시 딱 하나의 state와 setSTate로 압축해주어 state자체의 개수를 줄여주는 역할을 한다.
 const TikTekToGame = () => {
+    //useReducer에는 3번째 매개변수로 지연 초기화가 있으나 프로젝트가 복잡해지지 않는 이상 거의 쓰이지 않는다.
+    //dispatch가 호출되면 reducer메소드가 호출되며 이를 통해 어떤 state를 불러오고 싶어하는지 식별하게 된다.
     const [state, dispatch] = useReducer(reducer, initState);
     const {tableData, winner, recentCell, turn} = state;
 

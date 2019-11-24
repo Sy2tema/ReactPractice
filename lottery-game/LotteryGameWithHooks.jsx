@@ -2,6 +2,7 @@ import React, {useState, useRef, useEffect, useMemo} from 'react';
 import Ball from './Ball';
 import createWinNumber from './CreateWinNumber';
 
+//Hooks구조에서는 선언 순서가 중요하며 state는 조건문 안에 절대로 넣으면 안되며 또한 왠만하면 반복문이나 함수에도 넣지 않는것이 좋다.
 const LotterygameWithHooks = () => {
     //useMemo를 사용하게 되면 복잡한 함수의 결과값을 기억해 쓸데없이 재실행하지 않도록 메모해줄 수 있다.
     //useRef는 useMemo와는 달리 일반적인 여러 값들을 기억해둔다.
