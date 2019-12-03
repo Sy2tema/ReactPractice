@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {hot} from 'react-hot-loader/root';
+import { hot } from 'react-hot-loader/root';
 import MineSweeperGame from './MineSweeperGame';
 
 const Hot = hot(MineSweeperGame);

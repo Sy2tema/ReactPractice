@@ -1,6 +1,7 @@
 import React, {useState, useRef, useEffect, useMemo} from 'react';
 import Ball from './Ball';
 import createWinNumber from './CreateWinNumber';
+import Form from './Form';
 
 //Hooks구조에서는 선언 순서가 중요하며 state는 조건문 안에 절대로 넣으면 안되며 또한 왠만하면 반복문이나 함수에도 넣지 않는것이 좋다.
 const LotterygameWithHooks = () => {
@@ -52,6 +53,7 @@ const LotterygameWithHooks = () => {
 
     return (
         <>
+            <Form/>
             <div>당첨 숫자</div>
             <div id='resultWindow'>
                 {winBalls.map((value) => <Ball key={value} number={value} />)}
