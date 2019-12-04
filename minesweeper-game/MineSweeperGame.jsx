@@ -18,14 +18,14 @@ export const CODE = {
 export const TableContext = createContext({
     tableData: [],
     dispatch: () => {},
-    isGameover: false
+    isGameover: true
 });
 
 const initState = {
     tableData: [],
     timer: 0,
     resultString: '',
-    isGameover: false
+    isGameover: true
 };
 
 export const START_GAME = 'START_GAME';
@@ -44,12 +44,43 @@ const reducer = (state, action) => {
                 tableData: setMine(action.row, action.cell, action.mine),
                 isGameover: false
             };
+        //OPEN_CELL액션 내에서 재귀적으로 해결해야 렌더링을 줄일 수 있다.
         case OPEN_CELL: {
             //불변성을 지키기 위해 번거롭더라도 추가적인 작업을 거쳐야 한다.
             //아래의 과정을 거치면 클릭한 셀이 열림으로 바뀌게 된다.
             const tableData = [...state.tableData];
             tableData[action.row] = [...state.tableData[action.row]];
             tableData[action.row][action.cell] = CODE.OPENED;
+
+            let aroundCell = [];
+            //클릭한 셀의 윗줄이 존재하는 경우
+            if (tableData[action.row - 1]) {
+                aroundCell = aroundCell.concat(
+                    tableData[action.row - 1][action.cell - 1],
+                    tableData[action.row - 1][action.cell],
+                    tableData[action.row - 1][action.cell + 1]
+                );
+            }
+            aroundCell = aroundCell.concat(
+                tableData[action.row][action.cell - 1],
+                tableData[action.row][action.cell + 1]
+            );
+            //클릭한 셀의 아랫줄이 존재할 경우
+            if (tableData[action.row + 1]) {
+                aroundCell = aroundCell.concat(
+                    tableData[action.row + 1][action.cell - 1],
+                    tableData[action.row + 1][action.cell],
+                    tableData[action.row + 1][action.cell + 1]
+                );
+            }
+
+            //셀 주위를 확인하며 해당하는 코드명의 수를 기록한다.
+            const mineCount = aroundCell.filter
+                ((value) => [CODE.MINE, CODE.QUESTION_MINE, CODE.FLAG_MINE].includes(value)).length;
+            tableData[action.row][action.cell] = mineCount;
+
+            console.log(mineCount, aroundCell);
+
             return {
                 ...state,
                 tableData
