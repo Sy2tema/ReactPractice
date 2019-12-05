@@ -45,41 +45,89 @@ const reducer = (state, action) => {
                 isGameover: false
             };
         //OPEN_CELL액션 내에서 재귀적으로 해결해야 렌더링을 줄일 수 있다.
+        //코드를 진행하면서 오류가 나오면 대부분 괄호관계의 오류나 조건문의 설정 오류, 배열 요소 설정 오류였다. 이를 명심하고 주의해야된다는 생각을 했다.
         case OPEN_CELL: {
-            //불변성을 지키기 위해 번거롭더라도 추가적인 작업을 거쳐야 한다.
-            //아래의 과정을 거치면 클릭한 셀이 열림으로 바뀌게 된다.
+            //불변성을 유지하는 부분을 전체 칸으로 확대해 콜스택이 넘치지 않도록 대비해준다.
             const tableData = [...state.tableData];
-            tableData[action.row] = [...state.tableData[action.row]];
-            tableData[action.row][action.cell] = CODE.OPENED;
+            tableData.forEach((row, i) => {
+                tableData[i] = [...row];
+            });
 
-            let aroundCell = [];
-            //클릭한 셀의 윗줄이 존재하는 경우
-            if (tableData[action.row - 1]) {
-                aroundCell = aroundCell.concat(
-                    tableData[action.row - 1][action.cell - 1],
-                    tableData[action.row - 1][action.cell],
-                    tableData[action.row - 1][action.cell + 1]
-                );
-            }
-            aroundCell = aroundCell.concat(
-                tableData[action.row][action.cell - 1],
-                tableData[action.row][action.cell + 1]
-            );
-            //클릭한 셀의 아랫줄이 존재할 경우
-            if (tableData[action.row + 1]) {
-                aroundCell = aroundCell.concat(
-                    tableData[action.row + 1][action.cell - 1],
-                    tableData[action.row + 1][action.cell],
-                    tableData[action.row + 1][action.cell + 1]
-                );
-            }
+            //반복해서 서로를 체크하지 못하도록 캐싱해준다.
+            const alreadyChecked = [];
+            const checkAround = (row, cell) => {
+                //미확인된 칸을 제외한 경우들은 재귀에서 빼준다.
+                if ([CODE.OPENED, CODE.FLAG_MINE, CODE.FLAG, CODE.QUESTION_MINE, CODE.QUESTION].includes(tableData[row][cell])) {
+                    return;
+                }
+                //게임 밖의 화면일 경우를 제거해준다. 
+                if (row < 0 || row >= tableData.length || cell < 0 || cell >= tableData[0].length) {
+                    return;
+                }
+                //체크했는지의 여부를 기록한다.
+                if (alreadyChecked.includes(row + '|' + cell)) {
+                    return;
+                } else {
+                    alreadyChecked.push(row + '|' + cell);
+                }
 
-            //셀 주위를 확인하며 해당하는 코드명의 수를 기록한다.
-            const mineCount = aroundCell.filter
-                ((value) => [CODE.MINE, CODE.QUESTION_MINE, CODE.FLAG_MINE].includes(value)).length;
-            tableData[action.row][action.cell] = mineCount;
+                let aroundCell = [
+                    tableData[row][cell - 1],
+                    tableData[row][cell + 1]
+                ];
+                //클릭한 셀의 윗줄이 존재하는 경우
+                if (tableData[row - 1]) {
+                    aroundCell = aroundCell.concat([
+                        tableData[row - 1][cell - 1],
+                        tableData[row - 1][cell],
+                        tableData[row - 1][cell + 1]
+                    ]);
+                }
+                //클릭한 셀의 아랫줄이 존재할 경우
+                if (tableData[row + 1]) {
+                    aroundCell = aroundCell.concat([
+                        tableData[row + 1][cell - 1],
+                        tableData[row + 1][cell],
+                        tableData[row + 1][cell + 1]
+                    ]);
+                }
+    
+                //셀 주위를 확인하며 해당하는 코드명의 수를 기록한다.
+                const mineCount = aroundCell.filter(function (value) {
+                    return [CODE.MINE, CODE.QUESTION_MINE, CODE.FLAG_MINE].includes(value);
+                }).length;
 
-            console.log(mineCount, aroundCell);
+                //주변에 지뢰가 없는 경우 근처를 계속 비교하며 지뢰가 발견될때까지 연쇄적으로 클릭작용이 가능하도록 만든다.
+                if (mineCount === 0) {
+                    if (row > -1) {
+                        const nearCell = [
+                            [row, cell - 1],
+                            [row, cell + 1]
+                        ];
+                        if (row - 1 > -1) {
+                            nearCell.push([row - 1, cell - 1]);
+                            nearCell.push([row - 1, cell]);
+                            nearCell.push([row - 1, cell + 1]);
+                        }
+                        if (row + 1 < tableData.length) {
+                            nearCell.push([row + 1, cell - 1]);
+                            nearCell.push([row + 1, cell]);
+                            nearCell.push([row + 1, cell + 1]);
+                        }
+
+                        //좌우측 끝의 undefined들을 filter()메소드로 제거해준다.
+                        nearCell.forEach((element) => {
+                            if (tableData[element[0]][element[1]] !== CODE.OPENED) {
+                                checkAround(element[0], element[1]);
+                            }
+                        });
+                    }
+                }
+
+                tableData[row][cell] = mineCount;
+            };
+
+            checkAround(action.row, action.cell);
 
             return {
                 ...state,
@@ -87,6 +135,8 @@ const reducer = (state, action) => {
             };
         }
         case CLICK_MINE: {
+            //불변성을 지키기 위해 번거롭더라도 추가적인 작업을 거쳐야 한다.
+            //아래의 과정을 거치면 클릭한 셀이 열림으로 바뀌게 된다.
             const tableData = [...state.tableData];
             tableData[action.row] = [...state.tableData[action.row]];
             tableData[action.row][action.cell] = CODE.MINE_CLICKED;
