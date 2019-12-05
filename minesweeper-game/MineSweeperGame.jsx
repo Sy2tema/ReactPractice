@@ -1,4 +1,4 @@
-import React, {createContext, useReducer, useMemo} from 'react';
+import React, { useEffect, createContext, useReducer, useMemo } from 'react';
 import Table from './Table';
 import Form from './Form';
 
@@ -23,9 +23,15 @@ export const TableContext = createContext({
 
 const initState = {
     tableData: [],
+    data: {
+        row: 0,
+        cell: 0,
+        mine: 0
+    },
     timer: 0,
     resultString: '',
-    isGameover: true
+    isGameover: true,
+    openedCellCount: 0
 };
 
 export const START_GAME = 'START_GAME';
@@ -34,6 +40,7 @@ export const CLICK_MINE = 'CLICK_MINE';
 export const FLAG_CELL = 'FLAG_CELL';
 export const QUESTION_CELL = 'QUESTION_CELL';
 export const NORMALIZE_CELL = 'NORMALIZE_CELL';
+export const CONTINUE_TIME = 'CONTINUE_TIME';
 
 //각 액션들에 대한 실제적인 동작을 작성하는 부분이다.
 const reducer = (state, action) => {
@@ -41,8 +48,15 @@ const reducer = (state, action) => {
         case START_GAME:
             return {
                 ...state,
+                data: {
+                    row: action.row,
+                    cell: action.cell,
+                    mine: action.mine
+                },
+                openedCellCount: 0,
                 tableData: setMine(action.row, action.cell, action.mine),
-                isGameover: false
+                isGameover: false,
+                timer: 0
             };
         //OPEN_CELL액션 내에서 재귀적으로 해결해야 렌더링을 줄일 수 있다.
         //코드를 진행하면서 오류가 나오면 대부분 괄호관계의 오류나 조건문의 설정 오류, 배열 요소 설정 오류였다. 이를 명심하고 주의해야된다는 생각을 했다.
@@ -55,6 +69,7 @@ const reducer = (state, action) => {
 
             //반복해서 서로를 체크하지 못하도록 캐싱해준다.
             const alreadyChecked = [];
+            let count = 0;
             const checkAround = (row, cell) => {
                 //미확인된 칸을 제외한 경우들은 재귀에서 빼준다.
                 if ([CODE.OPENED, CODE.FLAG_MINE, CODE.FLAG, CODE.QUESTION_MINE, CODE.QUESTION].includes(tableData[row][cell])) {
@@ -124,14 +139,35 @@ const reducer = (state, action) => {
                     }
                 }
 
+                if (tableData[row][cell] === CODE.NORMAL) {
+                    count++;
+                }
+
                 tableData[row][cell] = mineCount;
             };
 
             checkAround(action.row, action.cell);
 
+            let isGameover = false;
+            let resultString = '';
+
+            console.log(state.data.row, state.data.row * state.data.cell - state.data.mine, state.openedCellCount, count);
+
+            //승리 조건 확인
+            //data state의 속성들이기 때문에 이를 기입하지 않으면 NaN이 뜨게 되었다.
+            //미리 숫자가 있는 칸을 클릭한 상태에서 빈 칸을 통해 다시 해당칸을 포함사는 범위를 열게 되면 이미 클릭한 칸도 count에 포함하는 문제 발견
+            //count의 위치를 조정해야 할 필요를 느꼈다. 이를 해결하기 위해 normal코드, 즉 열리지 않은 셀이 열렸을 때에만 카운트가 증가하도록 조치했다.
+            if (state.data.row * state.data.cell - state.data.mine === state.openedCellCount + count) {
+                isGameover = true;
+                resultString = `${state.timer}초만에 승리하셨습니다!`;
+            }
+
             return {
                 ...state,
-                tableData
+                tableData,
+                openedCellCount: state.openedCellCount + count,
+                isGameover,
+                resultString
             };
         }
         case CLICK_MINE: {
@@ -185,6 +221,12 @@ const reducer = (state, action) => {
                 tableData
             }
         }
+        case CONTINUE_TIME: {
+            return {
+                ...state,
+                timer: state.timer + 1
+            }
+        }
         default:
             return state;
     }
@@ -232,12 +274,25 @@ const MineSweeperGame = () => {
     //이를 해소하기 위해 useMemo를 통해 값에 변화가 있을 때에만 렌더링이 진행되도록 해주어야 한다.
     const value = useMemo(() => ({ tableData: tableData, isGameover, dispatch }), [tableData, isGameover]);
 
+    useEffect(() => {
+        let interval
+        if (!isGameover) {
+            interval = setInterval(() => {
+                dispatch({ type: CONTINUE_TIME });
+            }, 1000);
+        }
+
+        return () => {
+            clearInterval(interval);
+        }
+    }, [isGameover]);
+
     //데이터들을 접근하고싶은 컴포넌트들을 provider로 묶어주어야 정상적으로 contextAPI가 작동하게 된다.
     //이 때 value를 이용해 자식 컴포넌트에게 곧장 전달해주고자 할 데이터를 넣어줄 수 있다.
     return (
         <TableContext.Provider value={value}>
             <Form />
-            <div>{timer}</div>
+            <div>{timer}초</div>
             <Table />
             <div>{resultString}</div>
         </TableContext.Provider>
