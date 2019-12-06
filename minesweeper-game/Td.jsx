@@ -1,7 +1,9 @@
-import React, { useContext, useCallback, memo } from 'react';
+import React, { useContext, useCallback, memo, useMemo } from 'react';
 import { CODE, OPEN_CELL, CLICK_MINE, NORMALIZE_CELL, QUESTION_CELL, FLAG_CELL, TableContext } from './MineSweeperGame';
 
 //데이터 타입별로 다른 테이블 스타일을 가지도록 만들어준다.
+//기본적으로 contextAPI를 사용하게 되면 전체적으로 한 번씩 함수가 돌게 된다. 하지만 이를 렌더링에 적용시키게 되면 성능이 떨어지게 되기 때문에
+//useMemo등을 사용해 관리해주는 것이 좋다.
 const getTdStyle = (code) => {
     switch (code) {
         case CODE.NORMAL:
@@ -108,13 +110,14 @@ const Td = memo(({ rowIndex, cellIndex }) => {
     }, [tableData[rowIndex][cellIndex], isGameover]);
 
     //onContextMenu속성을 활용해 우클릭시 이벤트를 설정해줄 수 있다.
-    return (
+    //useMemo를 활용해 바뀌는 셀에만 다시 렌더링을 수행하도록 해준다.
+    return useMemo(() => (
         <td
             style={getTdStyle(tableData[rowIndex][cellIndex])}
             onClick={handleClickCell}
             onContextMenu={handleRightClick}
         >{getTdText(tableData[rowIndex][cellIndex])}</td>
-    );
+    ), [tableData[rowIndex][cellIndex]]);
 });
 
 export default Td;

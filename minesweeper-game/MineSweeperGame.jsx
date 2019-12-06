@@ -151,8 +151,6 @@ const reducer = (state, action) => {
             let isGameover = false;
             let resultString = '';
 
-            console.log(state.data.row, state.data.row * state.data.cell - state.data.mine, state.openedCellCount, count);
-
             //승리 조건 확인
             //data state의 속성들이기 때문에 이를 기입하지 않으면 NaN이 뜨게 되었다.
             //미리 숫자가 있는 칸을 클릭한 상태에서 빈 칸을 통해 다시 해당칸을 포함사는 범위를 열게 되면 이미 클릭한 칸도 count에 포함하는 문제 발견
@@ -234,7 +232,6 @@ const reducer = (state, action) => {
 
 //테이블에 대한 전체적인 데이터(지뢰 포함) 생성
 const setMine = (row, cell, mine) => {
-    console.log('setMine실행', row, cell, mine);
     const numberList = Array(row * cell).fill().map((arr, index) => {
         return index;
     });
@@ -272,7 +269,7 @@ const MineSweeperGame = () => {
 
     //provider에 그대로 데이터를 넣어주면 렌더링이 새로 될 때마다 새 객체가 중복생성되기 때문에 효율이 떨어진다.
     //이를 해소하기 위해 useMemo를 통해 값에 변화가 있을 때에만 렌더링이 진행되도록 해주어야 한다.
-    const value = useMemo(() => ({ tableData: tableData, isGameover, dispatch }), [tableData, isGameover]);
+    const value = useMemo(() => ({ tableData, isGameover, dispatch }), [tableData, isGameover]);
 
     useEffect(() => {
         let interval
