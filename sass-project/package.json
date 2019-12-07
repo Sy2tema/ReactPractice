@@ -1,10 +1,30 @@
 {
-  "name": "sass-project",
-  "version": "0.1.0",
-  "private": true,
+  "name": "sass-proj",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack-dev-server --hot"
+  },
+  "author": "Sy2tema",
+  "license": "MIT",
   "dependencies": {
+    "css-loader": "^3.2.1",
+    "node-sass": "^4.13.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-scripts": "3.3.0"
-  }
+    "sass-loader": "^8.0.0",
+    "style-loader": "^1.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.2",
+    "@babel/plugin-proposal-class-properties": "^7.7.0",
+    "@babel/preset-env": "^7.7.1",
+    "@babel/preset-react": "^7.7.0",
+    "babel-loader": "^8.0.6",
+    "react-hot-loader": "^4.12.17",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
+  },
+  "description": ""
 }

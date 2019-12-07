@@ -1,0 +1,31 @@
+//Sass를 원활하게 사용하기 위해서는 node-sass와 sass-loader라이브러리를 설치해야 한다.
+//간단한 실수를 했던 것 같다. 버튼 컴포넌트에서 Button.scss가 아닌 css확장자로 기입했던 것 같다.
+//위 문제가 아니라 style-loader와 css-loader라이브러리를 추가적으로 설치해주지 않아 생긴 문제였음을 발견했다.
+//라이브러리들을 설치 후 webpack.config.js에 옵션을 추가하자 문제가 해결되었다.
+//결과적으로 css, style, sass로더 라이브러리를 전부 설치해주어야 정상적으로 작동됨을 알 수 있었다.
+$blue: #228be6;
+
+.btn {
+    display: inline-flex;
+    color: white;
+    font-weight: bold;
+    outline: none;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+
+    height: 2.25rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 1rem;
+
+    background: $blue;
+    //scss를 사용하게 되면 기존 css에서는 사용하지 못했던 함수도 사용 가능해진다.
+    &:hover {
+        background: lighten($blue, 10%);
+    }
+
+    &:active {
+        background: darken($blue, 10%);
+    }
+}
