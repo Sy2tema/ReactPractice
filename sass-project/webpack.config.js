@@ -11,7 +11,7 @@ module.exports = {
         app: ['./client']
     },
     module: {
-        rules: [{
+        rules: [{ //Sass를 사용하기 위해 config에 등록해주어야 하는 부분
             test: /\.scss$/,
             loader: 'style-loader!css-loader!sass-loader'
         }, {

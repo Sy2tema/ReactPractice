@@ -8,6 +8,7 @@
   "author": "Sy2tema",
   "license": "MIT",
   "dependencies": {
+    "classnames": "^2.2.6",
     "css-loader": "^3.2.1",
     "node-sass": "^4.13.0",
     "react": "^16.12.0",

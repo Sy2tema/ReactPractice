@@ -3,9 +3,39 @@
 //위 문제가 아니라 style-loader와 css-loader라이브러리를 추가적으로 설치해주지 않아 생긴 문제였음을 발견했다.
 //라이브러리들을 설치 후 webpack.config.js에 옵션을 추가하자 문제가 해결되었다.
 //결과적으로 css, style, sass로더 라이브러리를 전부 설치해주어야 정상적으로 작동됨을 알 수 있었다.
-$blue: #228be6;
+$blue: #228BE6;
+$grape: #BE4DBD;
+$teal: #20C997;
 
-.btn {
+//Sass의 반복되는 코드들은 @mixin을 활용하면 마치 함수와 같이 재사용 가능한 코드로 만들 수 있다.
+@mixin button-color($color) {
+    background: $color;
+
+    //scss를 사용하게 되면 기존 css에서는 사용하지 못했던 함수도 사용 가능해진다.
+    &:hover {
+        background: lighten($color, 10%);
+    }
+    &:active {
+        background: darken($color, 10%);
+    }
+
+    //테두리에만 색을 입히고 내부는 투명하게 만든다.
+    &.outline {
+        color: $color;
+        background: none;
+        border: 1px solid $color;
+        &:hover {
+            background: $color;
+            color: white;
+        }
+        &:active {
+            background: darken($color, 10%);
+            color: white;
+        }
+    }
+}
+
+.Button {
     display: inline-flex;
     color: white;
     font-weight: bold;
@@ -19,13 +49,58 @@ $blue: #228be6;
     padding-right: 1rem;
     font-size: 1rem;
 
-    background: $blue;
-    //scss를 사용하게 되면 기존 css에서는 사용하지 못했던 함수도 사용 가능해진다.
-    &:hover {
-        background: lighten($blue, 10%);
+    //사이즈에 따른 태그 관리
+    //&.large는 .Button.large와 같은 의미다.
+    &.large {
+        height: 3rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        font-size: 1.25rem;
     }
 
-    &:active {
-        background: darken($blue, 10%);
+    
+    &.medium {
+        height: 2.25rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        font-size: 1.25rem;
+    }
+
+    &.small {
+        height: 1.75rem;
+        padding-left: 0.875rem;
+        padding-right: 1rem;
+        font-size: 1rem;
+    }
+
+    //색상에 따른 버튼 관리
+    &.blue {
+        @include button-color($blue);
+    }
+
+    &.grape {
+        @include button-color($grape);
+    }
+
+    &.teal {
+        @include button-color($teal);
+    }
+
+    //버튼의 범위를 화면 전체로 설정해준다.
+    &.fullWidth {
+        width: 100%;
+        justify-content: center;
+
+        & + & {
+            //기존에 설정했던 margin옵션을 덮어씌운다.
+            margin-left: 0;
+            margin-top: 1rem;
+        }
+    }
+
+    //& + &은 .Button + .Button을 의미한다.
+    //아래 코드는 곧 같은 클래스가 함께 있을 경우 오른쪽 버튼에 왼쪽 여백을 설정한다는 것을 의미한다.
+    & + & {
+        margin-left: 1rem;
     }
 }
